@@ -931,15 +931,21 @@ function buildDanny(scene, gltf) {
   dannyKey.position.set(px + 1.8, 2.0, pz + 0.5);
   scene.add(dannyKey);
 
-  // Fill on the opposite side so the shadow side matches the key-lit side. A
-  // spotlight aimed down at the figure keeps the cone off the ceiling, so it
-  // lifts the far side without adding another light pool up there. Tuned so its
-  // illumination on the figure roughly equals the key light's.
-  const dannyFill = new THREE.SpotLight(0xfff1e0, 6.5, 8, Math.PI / 4.5, 0.7, 2);
-  dannyFill.position.set(px + 1.7, 1.9, pz - 1.7);
-  dannyFill.target.position.set(px, 1.0, pz);
-  scene.add(dannyFill.target);
-  scene.add(dannyFill);
+  // The key light sits toward one side, so bracket the figure with a soft fill
+  // on EACH flank so neither side is left in harsh shadow. Both are spotlights
+  // aimed down at the figure, keeping their cones off the ceiling (no extra
+  // light pools up there).
+  const dannyFillA = new THREE.SpotLight(0xfff1e0, 6.0, 8, Math.PI / 4.5, 0.7, 2);
+  dannyFillA.position.set(px + 1.7, 1.9, pz - 1.7);
+  dannyFillA.target.position.set(px, 1.0, pz);
+  scene.add(dannyFillA.target);
+  scene.add(dannyFillA);
+
+  const dannyFillB = new THREE.SpotLight(0xfff1e0, 6.0, 8, Math.PI / 4.5, 0.7, 2);
+  dannyFillB.position.set(px + 1.7, 1.9, pz + 1.7);
+  dannyFillB.target.position.set(px, 1.0, pz);
+  scene.add(dannyFillB.target);
+  scene.add(dannyFillB);
 
   // Ceiling fixture directly above the light so it sits centered in the circle
   // (same fixture geometry/material as the room's other ceiling lights).
