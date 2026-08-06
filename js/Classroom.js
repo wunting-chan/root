@@ -821,6 +821,29 @@ function buildRackText(scene, rackX, rackZ, rackW, rackD, rackH) {
   return { rows, posOnPath, perimeter, SEG_COUNT };
 }
 
+// Lift the shaded side of a corner figure so its self-shadowing doesn't read as
+// harsh black. These figures sit far from the room's many fill lights, so add a
+// low emissive contribution that follows the model's own texture/color — this
+// raises the darkest areas without noticeably brightening the already-lit side
+// or touching any other object in the room.
+function liftModelShadows(model, intensity = 0.2) {
+  model.traverse((child) => {
+    if (!child.isMesh || !child.material) return;
+    const mats = Array.isArray(child.material) ? child.material : [child.material];
+    for (const mat of mats) {
+      if (!('emissive' in mat)) continue;
+      if (mat.map) {
+        mat.emissiveMap = mat.map;
+        mat.emissive.setRGB(1, 1, 1);
+      } else if (mat.color) {
+        mat.emissive.copy(mat.color);
+      }
+      mat.emissiveIntensity = intensity;
+      mat.needsUpdate = true;
+    }
+  });
+}
+
 function buildSkeletonChair(scene, gltf) {
   const group = new THREE.Group();
   group.userData.skeletonRoot = true;
@@ -839,6 +862,8 @@ function buildSkeletonChair(scene, gltf) {
     }
   });
 
+  liftModelShadows(model);
+
   const skelScale = 1.1;
   model.scale.set(skelScale, skelScale, skelScale);
   group.add(model);
@@ -850,6 +875,21 @@ function buildSkeletonChair(scene, gltf) {
   group.rotation.y = -Math.PI * 0.65 - (30 * Math.PI / 180);
 
   scene.add(group);
+
+  // Dedicated point light so the figure reads against the room (this corner is
+  // far from the ceiling point lights).
+  const skelKey = new THREE.PointLight(0xfff1e0, 5.0, 8, 2);
+  skelKey.position.set(hw - 2.4, 2.0, hd - 2.8);
+  scene.add(skelKey);
+
+  // Ceiling fixture centered on the light's pool so the circle reads as a lamp
+  // (same fixture geometry/material as the room's other ceiling lights).
+  const skelFixture = new THREE.Mesh(
+    new THREE.BoxGeometry(0.15, 0.03, 1.5),
+    new THREE.MeshBasicMaterial({ color: 0xfffff0 })
+  );
+  skelFixture.position.set(hw - 2.4, ROOM_HEIGHT - 0.05, hd - 2.8);
+  scene.add(skelFixture);
 
   // Invisible hitbox for raycasting — larger on mobile for easier targeting
   const isMobile = 'ontouchstart' in window || matchMedia('(pointer: coarse)').matches;
@@ -869,6 +909,8 @@ function buildDanny(scene, gltf) {
 
   const model = gltf.scene.clone(true);
 
+  liftModelShadows(model);
+
   // Model bounds: ~0.56 (X) x 1.60 (Y) x 0.77 (Z), sitting on the floor (minY = 0).
   const dannyScale = 1.05;
   model.scale.set(dannyScale, dannyScale, dannyScale);
@@ -883,6 +925,29 @@ function buildDanny(scene, gltf) {
   // Face into the room. Adjust this if he ends up facing the wall.
   group.rotation.y = Math.PI / 2;
   scene.add(group);
+
+  // Same light as the skeleton so both figures read consistently.
+  const dannyKey = new THREE.PointLight(0xfff1e0, 5.0, 8, 2);
+  dannyKey.position.set(px + 1.8, 2.0, pz + 0.5);
+  scene.add(dannyKey);
+
+  // Soft fill on the opposite side so the shadow side isn't left dark. A
+  // spotlight aimed down at the figure keeps the cone off the ceiling, so it
+  // lifts the far side without adding another light pool up there.
+  const dannyFill = new THREE.SpotLight(0xfff1e0, 4.0, 8, Math.PI / 4.5, 0.7, 2);
+  dannyFill.position.set(px + 1.8, 1.9, pz - 2.1);
+  dannyFill.target.position.set(px, 1.0, pz);
+  scene.add(dannyFill.target);
+  scene.add(dannyFill);
+
+  // Ceiling fixture directly above the light so it sits centered in the circle
+  // (same fixture geometry/material as the room's other ceiling lights).
+  const dannyFixture = new THREE.Mesh(
+    new THREE.BoxGeometry(0.15, 0.03, 1.5),
+    new THREE.MeshBasicMaterial({ color: 0xfffff0 })
+  );
+  dannyFixture.position.set(px + 1.8, ROOM_HEIGHT - 0.05, pz + 0.5);
+  scene.add(dannyFixture);
 
   // Invisible hitbox for raycasting — larger on mobile for easier targeting
   const isMobile = 'ontouchstart' in window || matchMedia('(pointer: coarse)').matches;
