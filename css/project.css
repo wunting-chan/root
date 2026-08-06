@@ -274,6 +274,14 @@ body.carousel-active .page-body a:visited { color: #c8a2d8; }
   display: block;
 }
 
+.video-embed video {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  background: #000;
+}
+
 .video-caption {
   font-size: 13px;
   color: #999;

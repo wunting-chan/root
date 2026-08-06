@@ -134,7 +134,7 @@ scene.background = new THREE.Color(0xd0c8b8);
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
 
 async function init() {
-  const { screenMeshes, leds, rackPosition, rackHitbox, rackGlow, rackTextRows, projectorScreenMesh, projectorScreenPos, skeletonGroup, skeletonHitbox, roomWidth, roomDepth, tableZ } = await buildClassroom(scene);
+  const { screenMeshes, leds, rackPosition, rackHitbox, rackGlow, rackTextRows, projectorScreenMesh, projectorScreenPos, skeletonGroup, skeletonHitbox, dannyGroup, dannyHitbox, roomWidth, roomDepth, tableZ } = await buildClassroom(scene);
 
   // Check if returning from a project page with saved camera state
   const urlParams = new URLSearchParams(window.location.search);
@@ -475,6 +475,36 @@ async function init() {
     });
   }
 
+  // Danny figure interaction (left wall) — same reality-distortion hover as skeleton
+  const dannyRaycaster = new THREE.Raycaster();
+  let dannyHovered = false;
+  const DANNY_HOVER_RANGE = isMobile ? 6.0 : 4.5;
+  const DANNY_PROJECT_ID = 7;
+
+  const handleDannyClick = () => {
+    if (dannyHovered && !monitorInteraction.isViewing && !monitorInteraction.isTransitioning) {
+      sessionStorage.setItem('labCamera', JSON.stringify({
+        x: camera.position.x, y: camera.position.y, z: camera.position.z,
+        yaw: controls.yaw, pitch: controls.pitch,
+      }));
+      window.location.href = `project.html?id=${DANNY_PROJECT_ID}`;
+    }
+  };
+  canvas.addEventListener('click', handleDannyClick);
+  if (isMobile) {
+    let dannyTapStart = null;
+    canvas.addEventListener('touchstart', (e) => {
+      dannyTapStart = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY, t: performance.now() };
+    });
+    canvas.addEventListener('touchend', (e) => {
+      if (!dannyTapStart) return;
+      const t = e.changedTouches[0];
+      const d = Math.sqrt((t.clientX - dannyTapStart.x) ** 2 + (t.clientY - dannyTapStart.y) ** 2);
+      if (d < 15 && performance.now() - dannyTapStart.t < 300) handleDannyClick();
+      dannyTapStart = null;
+    });
+  }
+
   const clock = new THREE.Clock();
 
   function animate() {
@@ -596,8 +626,27 @@ async function init() {
       skelHovered = false;
     }
 
-    // Skeleton hover triggers color stripping via MonitorInteraction
-    monitorInteraction.externalHoverGroup = skelHovered ? skeletonGroup : null;
+    // Danny figure: hover detection (skip if skeleton already hovered)
+    const dannyPos = dannyHitbox.position;
+    const ddx = camera.position.x - dannyPos.x;
+    const ddz = camera.position.z - dannyPos.z;
+    const dannyDist = Math.sqrt(ddx * ddx + ddz * ddz);
+
+    if (dannyDist < DANNY_HOVER_RANGE && !monitorInteraction.isViewing && !monitorInteraction.isTransitioning && !isHovering && !skelHovered) {
+      const dannyRayOrigin = isMobile ? screenCenter : rackMouse;
+      dannyRaycaster.setFromCamera(dannyRayOrigin, camera);
+      const dannyHits = dannyRaycaster.intersectObject(dannyHitbox);
+      dannyHovered = dannyHits.length > 0;
+    } else {
+      dannyHovered = false;
+    }
+
+    // Skeleton / Danny hover triggers color stripping via MonitorInteraction
+    monitorInteraction.externalHoverGroup = skelHovered
+      ? skeletonGroup
+      : (dannyHovered ? dannyGroup : null);
+
+    if (dannyHovered) canvas.style.cursor = 'pointer';
 
     // Accordion audio for skeleton hover (desktop only)
     if (!isMobile && skelHovered && !prevSkelHovered && !audioManager.muted) {

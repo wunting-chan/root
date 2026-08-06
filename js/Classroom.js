@@ -27,10 +27,11 @@ export async function buildClassroom(scene) {
   buildRoom(scene);
   buildLighting(scene);
 
-  const [pcGltf, chairGltf, skelGltf] = await Promise.all([
+  const [pcGltf, chairGltf, skelGltf, dannyGltf] = await Promise.all([
     loadGLB('media/glb/old_pc.glb'),
     loadGLB('media/glb/classroom_chair__silla_clase.glb'),
     loadGLB('media/glb/skeleton_chair.glb'),
+    loadGLB('media/glb/danny.glb'),
   ]);
 
   // Table runs along the X axis, pushed close to back wall
@@ -51,6 +52,8 @@ export async function buildClassroom(scene) {
 
   const skeleton = buildSkeletonChair(scene, skelGltf);
 
+  const danny = buildDanny(scene, dannyGltf);
+
   return {
     screenMeshes,
     leds,
@@ -62,6 +65,8 @@ export async function buildClassroom(scene) {
     projectorScreenPos: projector.screenPos,
     skeletonGroup: skeleton.group,
     skeletonHitbox: skeleton.hitbox,
+    dannyGroup: danny.group,
+    dannyHitbox: danny.hitbox,
     roomWidth: ROOM_WIDTH,
     roomDepth: ROOM_DEPTH,
     tableZ,
@@ -853,6 +858,39 @@ function buildSkeletonChair(scene, gltf) {
   const hitMat = new THREE.MeshBasicMaterial({ visible: false });
   const hitbox = new THREE.Mesh(hitGeo, hitMat);
   hitbox.position.set(hw - 0.8, 0.7, hd - 1.7);
+  scene.add(hitbox);
+
+  return { group, hitbox };
+}
+
+function buildDanny(scene, gltf) {
+  const group = new THREE.Group();
+  group.userData.dannyRoot = true;
+
+  const model = gltf.scene.clone(true);
+
+  // Model bounds: ~0.56 (X) x 1.60 (Y) x 0.77 (Z), sitting on the floor (minY = 0).
+  const dannyScale = 1.05;
+  model.scale.set(dannyScale, dannyScale, dannyScale);
+  group.add(model);
+
+  // Left wall, standing between the server rack (back corner, z ~ -3.75)
+  // and the book table / TAZ posters (front, z ~ 2.0-2.8).
+  const leftWallX = -(ROOM_WIDTH / 2 + 2); // -8.5
+  const px = leftWallX + 0.6;              // ~0.6 off the wall
+  const pz = -0.8;                         // roughly midway between rack and posters
+  group.position.set(px, 0, pz);
+  // Face into the room. Adjust this if he ends up facing the wall.
+  group.rotation.y = Math.PI / 2;
+  scene.add(group);
+
+  // Invisible hitbox for raycasting — larger on mobile for easier targeting
+  const isMobile = 'ontouchstart' in window || matchMedia('(pointer: coarse)').matches;
+  const hitScale = isMobile ? 2.0 : 1.0;
+  const hitGeo = new THREE.BoxGeometry(0.8 * hitScale, 1.7 * hitScale, 0.9 * hitScale);
+  const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+  const hitbox = new THREE.Mesh(hitGeo, hitMat);
+  hitbox.position.set(px, 0.85, pz);
   scene.add(hitbox);
 
   return { group, hitbox };

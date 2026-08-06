@@ -100,12 +100,28 @@ if (isCollectionList) {
     for (const vid of activeProject.videos) {
       const wrapper = document.createElement('div');
       wrapper.className = 'video-embed';
-      const iframe = document.createElement('iframe');
-      iframe.src = vid.url;
-      iframe.setAttribute('frameborder', '0');
-      iframe.setAttribute('allowfullscreen', '');
-      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-      wrapper.appendChild(iframe);
+
+      // Self-hosted video files (e.g. an mp4 on R2) render as a <video> element;
+      // everything else (YouTube/Vimeo embed URLs) renders as an <iframe>.
+      const isFile = /\.(mp4|webm|ogg|ogv|mov|m4v)(\?.*)?$/i.test(vid.url);
+      if (isFile) {
+        const video = document.createElement('video');
+        video.src = vid.url;
+        video.controls = true;
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.preload = 'metadata';
+        if (vid.poster) video.poster = vid.poster;
+        wrapper.appendChild(video);
+      } else {
+        const iframe = document.createElement('iframe');
+        iframe.src = vid.url;
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        wrapper.appendChild(iframe);
+      }
+
       if (vid.caption) {
         const cap = document.createElement('p');
         cap.className = 'video-caption';

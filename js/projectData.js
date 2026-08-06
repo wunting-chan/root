@@ -227,4 +227,26 @@ export const projects = [
     captions: [],
     sections: [],
   },
+  // index 7 — reached via the "danny" figure on the left wall (not on any monitor)
+  {
+    title: 'InFlux',
+    subtitle: '',
+    links: [],
+    videos: [
+      {
+        url: 'https://www.youtube.com/embed/tt6TRfiM3Jg',
+        caption: '',
+      },
+    ],
+    captions: [],
+    sections: [
+      section(
+        '',
+        'The project reflects on the contemporary moment\u2019s aggressively 2020s aesthetic: one in which icons and emojis stand in for emotional nuance, and digital exhaust trails behind every movement we make, both online and off. In InFlux the performer\u2019s body becomes a site of inquiry into the collapsing divide between subject and object, a body continuously processed, abstracted, and consumed by systems designed to extract value from every data point.\n\n' +
+        'This work deviates from traditional digital performance by resisting seamless augmentation. Instead, it foregrounds the jagged, often glitchy process of real-time data manipulation. The audience witnesses Danny\u2019s corporeal form morph in tandem with its digital double, experiencing firsthand how neural networks can hallucinate new bodies from mere pixels. The emoji, typically a flattening shorthand of human expression, becomes here a fractured surrogate, an iconography that paradoxically reveals the loss of embodied presence.\n\n' +
+        'The technological core of the piece utilizes an R-CNN architecture to isolate Danny\u2019s figure in each video frame, employing graph-based methods such as GrabCut for foreground extraction. From there, each block of pixels is programmatically matched to an emoji that most closely aligns in form and color, producing a mosaic in constant flux. The neural network is trained not for classification accuracy but to explore the fuzzy, stochastic boundaries of visual resemblance, embracing the brittle misclassifications and the system\u2019s own blind spots. This deliberate misuse of machine learning frameworks allows the work to destabilize typical discriminations of body, object, and meaning.\n\n' +
+        'The final projection juxtaposes the performer\u2019s live body with its emoji-based translation, forcing the audience to negotiate between the immediacy of flesh and the cold, flattened abstraction of data. The system, while technically sophisticated, is intentionally fragile, intended to be a nod to the brittleness of the infrastructures that underpin our increasingly digitized interactions.'
+      ),
+    ],
+  },
 ];
