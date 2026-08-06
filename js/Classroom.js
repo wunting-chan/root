@@ -931,11 +931,12 @@ function buildDanny(scene, gltf) {
   dannyKey.position.set(px + 1.8, 2.0, pz + 0.5);
   scene.add(dannyKey);
 
-  // Soft fill on the opposite side so the shadow side isn't left dark. A
+  // Fill on the opposite side so the shadow side matches the key-lit side. A
   // spotlight aimed down at the figure keeps the cone off the ceiling, so it
-  // lifts the far side without adding another light pool up there.
-  const dannyFill = new THREE.SpotLight(0xfff1e0, 4.0, 8, Math.PI / 4.5, 0.7, 2);
-  dannyFill.position.set(px + 1.8, 1.9, pz - 2.1);
+  // lifts the far side without adding another light pool up there. Tuned so its
+  // illumination on the figure roughly equals the key light's.
+  const dannyFill = new THREE.SpotLight(0xfff1e0, 6.5, 8, Math.PI / 4.5, 0.7, 2);
+  dannyFill.position.set(px + 1.7, 1.9, pz - 1.7);
   dannyFill.target.position.set(px, 1.0, pz);
   scene.add(dannyFill.target);
   scene.add(dannyFill);
