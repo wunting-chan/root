@@ -134,7 +134,7 @@ export const projects = [
     links: [
       link('Web Tool', 'https://main.d3v90zo52exf1d.amplifyapp.com/'),
       link('Research Doc', 'https://pub-c13cdb673b934fa282c9bb3c6f22046e.r2.dev/projects/pixel-ninja/pdf/PixelStacks__High_Capacity_Image_Steganography_for_Censorship_Circumvention_of_Long_Form_Content.pdf'),
-      link('GitHub Repo', 'https://github.com/FifthEpoch/Chaos_LSB'),
+      link('GitHub Repo', 'https://github.com/wunting-chan/Chaos_LSB'),
     ],
     manifestPath: 'projects/keyword-censorship/manifest.txt',
     captions: [],
@@ -172,13 +172,13 @@ export const projects = [
     subtitle:
       'eliza is a web-based art project that lures participants into a mesmerizing maze-like website.',
     links: [
-      link('WIP Website', 'https://fifthepoch.github.io/cam-site/'),
-      link('GitHub', 'https://github.com/FifthEpoch'),
+      link('WIP Website', 'https://wunting-chan.github.io/cam-site/'),
+      link('GitHub', 'https://github.com/wunting-chan'),
     ],
     manifestPath: 'projects/eliza/manifest.txt',
     screenImage: 'projects/eliza/images/00.png',
     screenOverlay: true,
-    directUrl: 'https://fifthepoch.github.io/cam-site/',
+    directUrl: 'https://wunting-chan.github.io/cam-site/',
     captions: [],
     sections: [
       section(

@@ -149,6 +149,30 @@ html, body {
   display: block;
 }
 
+.landing-alt {
+  margin-top: 1.8rem;
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  mix-blend-mode: difference;
+}
+
+.landing-alt a {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  opacity: 0.85;
+}
+
+.landing-alt a:hover,
+.landing-alt a:focus-visible {
+  opacity: 1;
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;

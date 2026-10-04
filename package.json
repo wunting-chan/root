@@ -1,0 +1,11 @@
+{
+  "name": "ting-directory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ting.directory — 3D portfolio and its text-first counterpart.",
+  "scripts": {
+    "build:text": "node tools/build-text-site.mjs",
+    "build:text:check": "CHECK_MEDIA=1 node tools/build-text-site.mjs"
+  }
+}

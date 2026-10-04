@@ -1,0 +1,261 @@
+/* ting.directory — text-first site.
+   Deliberately plain, typographic, document-like. No hero animation, no cards,
+   no decorative gradients. Core reading needs no JavaScript. */
+
+:root {
+  --bg: #fafafa;
+  --fg: #111;
+  --muted: #555;
+  --rule: #d9d9d9;
+  --link: #0b3ad6;
+  --visited: #6a1fb0;
+  --maxw: 72ch;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace, "PingFang HK", "PingFang TC",
+    "Noto Sans CJK TC", "Microsoft JhengHei", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+@media (min-width: 40rem) {
+  body { font-size: 17px; }
+}
+
+/* ---- skip link ---- */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--fg);
+  color: var(--bg);
+  padding: 0.5rem 0.75rem;
+  z-index: 10;
+}
+.skip-link:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+/* ---- layout ---- */
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+/* ---- links ---- */
+a { color: var(--link); text-underline-offset: 2px; }
+a:visited { color: var(--visited); }
+a:hover { text-decoration-thickness: 2px; }
+
+:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+/* ---- masthead + nav ---- */
+.masthead {
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.masthead .site-name {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.5rem;
+}
+.masthead .site-name a { color: inherit; text-decoration: none; }
+.masthead .site-name a:hover { text-decoration: underline; }
+
+nav.primary ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+nav.primary a { color: var(--fg); }
+nav.primary a[aria-current="page"] {
+  text-decoration: none;
+  font-weight: 700;
+  cursor: default;
+}
+
+/* ---- headings ---- */
+h1 { font-size: 1.6rem; line-height: 1.25; margin: 0 0 0.5rem; }
+h2 { font-size: 1.2rem; margin: 2rem 0 0.5rem; }
+h3 { font-size: 1.02rem; margin: 1.5rem 0 0.4rem; }
+.lede { font-size: 1.05rem; color: var(--fg); margin: 0 0 1.5rem; }
+
+p { margin: 0 0 1rem; }
+.muted { color: var(--muted); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 1.5rem 0;
+}
+
+.breadcrumb { font-size: 0.9rem; margin: 0 0 1rem; }
+
+/* ---- project index rows ---- */
+.index { list-style: none; margin: 0; padding: 0; }
+.index > li {
+  border-top: 1px solid var(--rule);
+  padding: 1.1rem 0;
+}
+.index > li:last-child { border-bottom: 1px solid var(--rule); }
+
+.entry { display: flex; gap: 1rem; align-items: flex-start; }
+.entry .thumb {
+  flex: 0 0 auto;
+  width: 150px;
+  display: block;
+}
+.entry .thumb img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid var(--rule);
+  background: #fff;
+}
+.entry .body { flex: 1 1 auto; min-width: 0; }
+.entry .title { font-size: 1.05rem; margin: 0 0 0.25rem; }
+.entry .meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0 0 0.4rem;
+}
+.entry .meta .status {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.entry .summary { margin: 0; }
+
+@media (max-width: 34rem) {
+  .entry { flex-direction: column; }
+  .entry .thumb { width: 100%; max-width: 320px; }
+}
+
+/* ---- figures / galleries ---- */
+figure {
+  margin: 1.5rem 0;
+}
+figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid var(--rule);
+  background: #fff;
+}
+figure.portrait img { max-height: 85vh; width: auto; }
+figcaption {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.4rem;
+}
+
+/* ---- video (click-to-load) ---- */
+.video { margin: 1.5rem 0; }
+.video .poster {
+  position: relative;
+  display: block;
+  border: 1px solid var(--rule);
+  background: #000;
+  max-width: 100%;
+}
+.video .poster img { display: block; width: 100%; height: auto; }
+.video .poster .play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.25);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.video .frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+.video .frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.video video { width: 100%; height: auto; background: #000; display: block; }
+.video .alt-link { font-size: 0.9rem; margin-top: 0.4rem; }
+
+/* ---- link lists ---- */
+.links { list-style: none; margin: 0.5rem 0 1rem; padding: 0; }
+.links li { margin: 0.25rem 0; }
+.links .ext::after { content: " \2197"; }
+.links .pdf::after { content: " (PDF)"; color: var(--muted); }
+
+/* ---- controls (hide images) ---- */
+.controls {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.9rem;
+}
+.controls button {
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid var(--fg);
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+}
+.controls button:hover { background: var(--fg); color: var(--bg); }
+
+/* With images hidden, drop thumbnails + figures but keep all text. */
+html.no-images .entry .thumb,
+html.no-images figure img,
+html.no-images .video .poster img { display: none; }
+html.no-images figure { margin: 0.75rem 0; }
+
+/* ---- copyable blocks ---- */
+.copyblock {
+  border: 1px solid var(--rule);
+  background: #fff;
+  padding: 0.9rem 1rem;
+  margin: 0.5rem 0 1.25rem;
+}
+.copyblock p:last-child { margin-bottom: 0; }
+
+/* ---- footer ---- */
+.site-footer {
+  margin-top: 3rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.site-footer a { color: var(--link); }
+.site-footer .row { margin: 0.25rem 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+}
