@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-/* Static generator for the text-first site at /text/.
+/* Static generator for the text-first site at /arts/text/.
  *
- * Reads shared project records from ../js/projectData.js (so one edit updates
+ * Reads shared project records from ../arts/js/projectData.js (so one edit updates
  * both the 3D and text presentations) plus hand-authored copy from
  * ./text-content.mjs, resolves manifests to real R2 URLs, and writes plain,
  * accessible HTML for every route. No Three.js, scene code, or framework is
@@ -16,7 +16,7 @@ import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import https from 'node:https';
 
-import { projects } from '../js/projectData.js';
+import { projects } from '../arts/js/projectData.js';
 import {
   SITE, NAV, PROJECT_SLUGS, CHILD_SLUGS, PROJECT_META, HOME_ORDER,
   ABOUT, RESEARCH, TRANSLATIONS, PRESS, CONTACT, MISSING,
@@ -24,7 +24,7 @@ import {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
-const OUT = join(ROOT, 'text');
+const OUT = join(ROOT, 'arts', 'text');
 
 const missingMedia = [];
 const warnings = [];
@@ -69,9 +69,9 @@ function dimsFromWixUrl(url) {
 }
 
 /* Resolve a project/child manifest into concrete R2 image records, matching the
- * 3D site's resolution rules (../js/project.js). */
+ * 3D site's resolution rules (../arts/js/project.js). */
 function readManifest(manifestPath) {
-  const abs = join(ROOT, manifestPath);
+  const abs = join(ROOT, 'arts', manifestPath);
   if (!existsSync(abs)) {
     warnings.push(`manifest missing: ${manifestPath}`);
     return [];
@@ -128,7 +128,7 @@ function navHtml(activeHref) {
 
 function footerHtml() {
   return `<footer class="site-footer">
-  <p class="row"><a href="/text/">Text home</a> &middot; <a href="/">3D experience</a></p>
+  <p class="row"><a href="/arts/text/">Text home</a> &middot; <a href="/arts/">3D experience</a></p>
   <p class="row muted">${esc(SITE.nameFull)} &middot; ting.directory</p>
 </footer>`;
 }
@@ -143,7 +143,7 @@ function layout({ title, desc, path, bodyHtml, ogImage, imageToggle }) {
   const preScript = imageToggle
     ? `\n  <script>try{if(localStorage.getItem('ting-text-hide-images')==='1')document.documentElement.className+=' no-images';}catch(e){}</script>`
     : '';
-  const appScript = `\n  <script src="/text/text.js" defer></script>`;
+  const appScript = `\n  <script src="/arts/text/text.js" defer></script>`;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -157,13 +157,13 @@ function layout({ title, desc, path, bodyHtml, ogImage, imageToggle }) {
   <meta property="og:description" content="${escAttr(desc)}">
   <meta property="og:url" content="${escAttrUrl(canonical)}">${og}
   <meta name="twitter:card" content="${ogImage ? 'summary_large_image' : 'summary'}">
-  <link rel="stylesheet" href="/text/text.css">${preScript}${appScript}
+  <link rel="stylesheet" href="/arts/text/text.css">${preScript}${appScript}
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="wrap">
     <header class="masthead">
-      <p class="site-name"><a href="/text/">${esc(SITE.nameFull)}</a></p>
+      <p class="site-name"><a href="/arts/text/">${esc(SITE.nameFull)}</a></p>
       ${navHtml(path)}
     </header>
     <main id="main">
@@ -275,7 +275,7 @@ function normalize(p, index) {
     isCollection: children.length > 0,
     children,
     cover: coverFor(p, meta),
-    url: `/text/projects/${slug}/`,
+    url: `/arts/text/projects/${slug}/`,
   };
 }
 
@@ -319,21 +319,21 @@ function buildHome() {
 <h1>${esc(SITE.nameFull)}</h1>
 <p class="lede">${esc(SITE.intro)}</p>
 <p>This is a fast, text-first entrance to the portfolio. The same work is also
-explorable as a <a href="/">3D computer-lab experience</a>.</p>
+explorable as a <a href="/arts/">3D computer-lab experience</a>.</p>
 
 <h2>Selected work</h2>
 <div class="controls" data-image-toggle></div>
 <ul class="index">
 ${rows}
 </ul>
-<p><a href="/text/work/">All work and archive &rarr;</a> &middot;
-<a href="/text/about/">About</a> &middot;
-<a href="/text/contact/">Contact</a></p>
+<p><a href="/arts/text/work/">All work and archive &rarr;</a> &middot;
+<a href="/arts/text/about/">About</a> &middot;
+<a href="/arts/text/contact/">Contact</a></p>
 `;
   writePage('', layout({
     title: SITE.name,
     desc: SITE.intro,
-    path: '/text/',
+    path: '/arts/text/',
     bodyHtml: body,
     ogImage: bySlug['InFlux']?.cover?.src,
     imageToggle: true,
@@ -361,7 +361,7 @@ ${rows}
   writePage('work', layout({
     title: 'Work',
     desc: 'All public art and design projects by Wun Ting Chan, including collections and archive.',
-    path: '/text/work/',
+    path: '/arts/text/work/',
     bodyHtml: body,
     imageToggle: true,
   }));
@@ -372,7 +372,7 @@ function buildProjectPage(project) {
   const meta = project.meta;
 
   let body = `
-<p class="breadcrumb"><a href="/text/work/">&larr; Work</a></p>
+<p class="breadcrumb"><a href="/arts/text/work/">&larr; Work</a></p>
 <h1>${esc(project.display)}</h1>`;
   const ml = metaLine(meta);
   if (ml) body += `\n<p class="meta muted">${ml}</p>`;
@@ -386,7 +386,7 @@ function buildProjectPage(project) {
     const items = project.children
       .map((child) => {
         if (childIsPage(child)) {
-          const href = `/text/projects/${childSlug(child)}/`;
+          const href = `/arts/text/projects/${childSlug(child)}/`;
           return `<li><div class="entry"><div class="body"><h2 class="title"><a href="${href}">${esc(child.title)}</a></h2>${child.subtitle ? `<p class="summary">${esc(child.subtitle)}</p>` : ''}</div></div></li>`;
         }
         if (child.href) {
@@ -442,7 +442,7 @@ function buildChildPage(parent, child) {
   const slug = childSlug(child);
   const media = resolveMedia(child);
   let body = `
-<p class="breadcrumb"><a href="/text/work/">&larr; Work</a> / <a href="${parent.url}">${esc(parent.display)}</a></p>
+<p class="breadcrumb"><a href="/arts/text/work/">&larr; Work</a> / <a href="${parent.url}">${esc(parent.display)}</a></p>
 <h1>${esc(child.title)}</h1>`;
   if (child.subtitle) body += `\n<p class="lede">${esc(child.subtitle)}</p>`;
   if (child.links && child.links.length) body += `\n${linksList(child.links.map((l) => ({ label: l.text, url: l.url })))}`;
@@ -457,7 +457,7 @@ function buildChildPage(parent, child) {
   writePage(`projects/${slug}`, layout({
     title: child.title,
     desc: child.subtitle || `${child.title} — part of ${parent.display} by ${SITE.name}.`,
-    path: `/text/projects/${slug}/`,
+    path: `/arts/text/projects/${slug}/`,
     bodyHtml: body,
     ogImage: cover?.src,
     imageToggle: false,
@@ -480,7 +480,7 @@ ${ABOUT.longBio.map((t) => `<p>${esc(t)}</p>`).join('\n')}
   writePage('about', layout({
     title: 'About',
     desc: `About ${SITE.nameFull}: artist, translator, and computer scientist from Hong Kong, based in New York.`,
-    path: '/text/about/',
+    path: '/arts/text/about/',
     bodyHtml: body,
   }));
 }
@@ -512,7 +512,7 @@ ${groups}
   writePage('research', layout({
     title: 'Research',
     desc: 'Selected research and applied work by Wun Ting Chan, with links to papers and code.',
-    path: '/text/research/',
+    path: '/arts/text/research/',
     bodyHtml: body,
   }));
 }
@@ -541,7 +541,7 @@ ${items}
   writePage('translations', layout({
     title: 'Translations',
     desc: 'Translation credits by Wun Ting Chan, with source authors, languages, dates, and reading links.',
-    path: '/text/translations/',
+    path: '/arts/text/translations/',
     bodyHtml: body,
   }));
 }
@@ -552,12 +552,12 @@ function buildActing() {
   const body = `
 <h1>Acting</h1>
 <p class="lede">For acting inquiries, please get in touch.</p>
-<p><a href="/text/contact/">Contact &rarr;</a></p>
+<p><a href="/arts/text/contact/">Contact &rarr;</a></p>
 `;
   writePage('acting', layout({
     title: 'Acting',
     desc: 'Acting inquiries for Wun Ting Chan.',
-    path: '/text/acting/',
+    path: '/arts/text/acting/',
     bodyHtml: body,
   }));
 }
@@ -593,7 +593,7 @@ ${selHtml}
   writePage('press', layout({
     title: 'Press',
     desc: 'Press materials for Wun Ting Chan: bios, CV, selected projects, and interview topics.',
-    path: '/text/press/',
+    path: '/arts/text/press/',
     bodyHtml: body,
     ogImage: selected[0]?.cover?.src,
   }));
@@ -614,7 +614,7 @@ function buildContact() {
   writePage('contact', layout({
     title: 'Contact',
     desc: 'Contact and verified profiles for Wun Ting Chan.',
-    path: '/text/contact/',
+    path: '/arts/text/contact/',
     bodyHtml: body,
   }));
 }
@@ -623,18 +623,18 @@ function buildContact() {
 
 function collectRoutes() {
   const routes = new Set([
-    '/text/', '/text/work/', '/text/about/', '/text/research/',
-    '/text/translations/', '/text/acting/', '/text/press/', '/text/contact/',
+    '/arts/text/', '/arts/text/work/', '/arts/text/about/', '/arts/text/research/',
+    '/arts/text/translations/', '/arts/text/acting/', '/arts/text/press/', '/arts/text/contact/',
   ]);
   for (const p of model) {
     routes.add(p.url);
-    for (const c of p.children) if (childIsPage(c)) routes.add(`/text/projects/${childSlug(c)}/`);
+    for (const c of p.children) if (childIsPage(c)) routes.add(`/arts/text/projects/${childSlug(c)}/`);
   }
   return [...routes];
 }
 
 function buildSitemap() {
-  const urls = ['/', ...collectRoutes()];
+  const urls = ['/', '/arts/', '/research/', ...collectRoutes()];
   const body = urls
     .map((u) => `  <url><loc>${SITE.origin}${u}</loc></url>`)
     .join('\n');
@@ -719,7 +719,7 @@ async function main() {
   if (process.env.CHECK_MEDIA) await checkMedia();
 
   const routes = collectRoutes();
-  console.log(`\n✓ Generated ${routes.length} text routes under /text/`);
+  console.log(`\n✓ Generated ${routes.length} text routes under /arts/text/`);
   routes.forEach((r) => console.log('   ' + r));
   if (warnings.length) {
     console.log('\n⚠ Build warnings:');

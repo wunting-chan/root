@@ -1,6 +1,6 @@
-// Shared authoring content for the text-first site (ting.directory/text/).
+// Shared authoring content for the text-first site (ting.directory/arts/text/).
 //
-// PROJECT records come from ../js/projectData.js so the 3D site and the text
+// PROJECT records come from ../arts/js/projectData.js so the 3D site and the text
 // site stay in sync. This module only holds (a) small per-project overrides that
 // the 3D data does not carry (stable slug, year, medium, status, chosen cover)
 // and (b) the hand-written copy for the non-project pages (about, research,
@@ -12,7 +12,7 @@
 
 export const SITE = {
   origin: 'https://ting.directory',
-  base: '/text/',
+  base: '/arts/text/',
   name: 'Wun Ting Chan',
   nameFull: 'Wun Ting Chan (Ting)',
   // Provisional intro — Ting to confirm final wording (see MISSING).
@@ -27,14 +27,14 @@ export const SITE = {
 
 // Primary visible navigation (order per spec).
 export const NAV = [
-  { label: 'Home', href: '/text/' },
-  { label: 'Work', href: '/text/work/' },
-  { label: 'Research', href: '/text/research/' },
-  { label: 'Translations', href: '/text/translations/' },
-  { label: 'Acting', href: '/text/acting/' },
-  { label: 'About', href: '/text/about/' },
-  { label: 'Press', href: '/text/press/' },
-  { label: 'Contact', href: '/text/contact/' },
+  { label: 'Home', href: '/arts/text/' },
+  { label: 'Work', href: '/arts/text/work/' },
+  { label: 'Applied work', href: '/arts/text/research/' },
+  { label: 'Translations', href: '/arts/text/translations/' },
+  { label: 'Acting', href: '/arts/text/acting/' },
+  { label: 'About', href: '/arts/text/about/' },
+  { label: 'Press', href: '/arts/text/press/' },
+  { label: 'Contact', href: '/arts/text/contact/' },
 ];
 
 // Stable slug for each top-level project, keyed by its title in projectData.js.
@@ -158,7 +158,7 @@ export const RESEARCH = {
           plain:
             'Can hidden-text-in-images carry banned or sensitive long-form writing past automated keyword filtering while keeping image quality high?',
           status: 'Research document and open-source tool (public).',
-          project: '/text/projects/evading-online-keyword-censorship/',
+          project: '/arts/text/projects/evading-online-keyword-censorship/',
           links: [
             {
               label: 'Research document (PDF)',
@@ -180,7 +180,7 @@ export const RESEARCH = {
             'Between Flesh and Code: Free Translation from Biology to Computer Algorithm',
           plain:
             'An essay reading across biology and computation as a problem of translation.',
-          writing: '/text/projects/writings/',
+          writing: '/arts/text/projects/writings/',
           links: [
             {
               label: 'Read (PDF)',
@@ -206,7 +206,7 @@ export const TRANSLATIONS = {
       languages: 'English → Traditional Chinese',
       translator: 'Wun Ting Chan (translation, book design, project organization)',
       published: '2020 — 5,000 free copies distributed in Hong Kong with 40+ volunteers',
-      project: '/text/projects/taz/',
+      project: '/arts/text/projects/taz/',
       links: [
         {
           label: 'Read TAZ in Traditional Chinese (PDF)',

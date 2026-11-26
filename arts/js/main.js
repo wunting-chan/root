@@ -14,6 +14,9 @@ const hint = document.getElementById('controls-hint');
 
 const isRestore = new URLSearchParams(window.location.search).get('restore') === '1';
 if (isRestore) {
+  if (!window.location.pathname.startsWith('/arts/')) {
+    history.replaceState({}, '', '/arts/' + window.location.search + window.location.hash);
+  }
   overlay.style.display = 'none';
 }
 
@@ -891,6 +894,9 @@ async function init() {
       enterBtn.addEventListener('click', resolve, { once: true });
     });
 
+    // Keep the original in-page transition and user gesture while giving the lab its own URL.
+    if (window.location.pathname !== '/arts/') history.replaceState({}, '', '/arts/');
+
     // The "Enter My Lab" tap is a user gesture — request gyroscope permission now
     if (isMobile && gyroToggle) {
       const ok = await activateGyro();
@@ -914,5 +920,10 @@ async function init() {
 
 init().catch((err) => {
   console.error('Scene init failed:', err);
-  overlay.innerHTML = `<pre style="color:red;padding:2rem">${err.message}\n${err.stack}</pre>`;
+  overlay.classList.remove('hidden');
+  overlay.style.display = '';
+  const enterBtn = document.getElementById('enter-btn');
+  enterBtn.classList.remove('loading');
+  enterBtn.disabled = true;
+  enterBtn.querySelector('.btn-text').textContent = 'Lab unavailable';
 });
